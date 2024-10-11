@@ -1,27 +1,14 @@
-import styled from "@emotion/styled";
-import { v4 as uuidv4 } from "uuid";
 import React, { useEffect } from "react";
 import {
   configDataRef,
   playDataRef,
-  resetScores,
   scoresDataRef,
-  setCurrentTopic,
   setMode,
-  subPlayData,
-  updateTopics,
 } from "../data/dataConfig";
 import { Page } from "../components/Page";
 import { ConfigData, Mode, PlayData } from "../helpers/types";
-import {
-  collection,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  updateDoc,
-} from "@firebase/firestore";
+import { getDoc, onSnapshot, updateDoc } from "@firebase/firestore";
 import { TopicList } from "../components/TopicList";
-import { col, db } from "../data/config";
 import { Button } from "../components/Button";
 
 interface Props {
@@ -41,10 +28,6 @@ export const PageControl: React.FC<Props> = (props) => {
           currentTopicId: data.currentTopicId,
           currentMode: data.currentMode,
           scores: [],
-          // scores: Object.keys(data.scores).map((key) => ({
-          //   id: key,
-          //   value: data.scores[key],
-          // })),
         });
       }
     });

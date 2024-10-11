@@ -1,17 +1,11 @@
 import React, { useEffect } from "react";
 
 import { ConfigData, Panelist, PlayData, Score, Topic } from "../helpers/types";
-import {
-  getConfigData,
-  getPlayData,
-  playDataRef,
-  updateScore,
-} from "../data/dataConfig";
+import { getConfigData, playDataRef } from "../data/dataConfig";
 import styled from "@emotion/styled/macro";
 import { Page } from "../components/Page";
 import { PanelistCard } from "../components/PanelistCard";
 import { doc, increment, onSnapshot, updateDoc } from "@firebase/firestore";
-import { v4 as uuidv4 } from "uuid";
 import { col, db } from "../data/config";
 
 interface Props {

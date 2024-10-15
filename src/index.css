@@ -1,6 +1,13 @@
 :root {
   --black: #000000;
   --white: #ffffff;
+  --color-primary: #e9a20a;
+  --color-secondary: #e9a20a33;
+  --color-label: #ddd;
+  --color-input-bg: #44444444;
+  --color-input-text: #ddd;
+  --color-controlpanel-bg: #333;
+  --color-controlpanel-bgo: #33333399;
 }
 
 body {
@@ -12,11 +19,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: var(--white);
   background: rgb(38, 53, 91);
-  background: linear-gradient(
-    135deg,
-    rgba(38, 53, 91, 1) 0%,
-    rgba(0, 212, 255, 1) 100%
-  );
 }
 
 code {

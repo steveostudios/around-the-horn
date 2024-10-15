@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { Panelist, Score } from "../helpers/types";
-import { Button } from "./Button";
 import IconAdd from "./../assets/icons/plus-solid.svg";
 import IconMinus from "./../assets/icons/minus-solid.svg";
+import { ButtonClient } from "./ButtonClient";
 
 interface Props {
   panelist: Panelist;
@@ -11,6 +11,8 @@ interface Props {
   type: "controller" | "viewer";
   onIncrement?: (panelistId: string) => void;
   onDecrement?: (panelistId: string) => void;
+  disableIncrement?: boolean;
+  disableDecrement?: boolean;
 }
 
 export const PanelistCard: React.FC<Props> = (props) => {
@@ -29,17 +31,21 @@ export const PanelistCard: React.FC<Props> = (props) => {
       {type === "viewer" && <div className="score">{score?.value || 0}</div>}
       {type === "controller" && (
         <div className="controller">
-          <Button
+          <ButtonClient
+            name="decrement"
             onClick={() => props.onDecrement && props.onDecrement(panelist.id)}
+            disabled={props.disableDecrement}
           >
             <img src={IconMinus} alt="Decrement" />
-          </Button>
+          </ButtonClient>
           <span>{score?.value || 0}</span>
-          <Button
+          <ButtonClient
+            name="increment"
             onClick={() => props.onIncrement && props.onIncrement(panelist.id)}
+            disabled={props.disableIncrement}
           >
             <img src={IconAdd} alt="Increment" />
-          </Button>
+          </ButtonClient>
         </div>
       )}
     </Container>

@@ -1,15 +1,17 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { Topic } from "../helpers/types";
-import IconMoveUp from "./../assets/icons/up-solid.svg";
-import IconSave from "./../assets/icons/floppy-disk-solid.svg";
-import IconCancel from "./../assets/icons/xmark-solid.svg";
-import IconAdd from "./../assets/icons/plus-solid.svg";
-import IconDelete from "./../assets/icons/trash-solid.svg";
-import IconMoveDown from "./../assets/icons/down-solid.svg";
-import IconEdit from "./../assets/icons/pen-to-square-solid.svg";
+import IconMoveUp from "./../assets/icons/up-solid-primary.svg";
+import IconSave from "./../assets/icons/floppy-disk-solid-primary.svg";
+import IconCancel from "./../assets/icons/xmark-solid-primary.svg";
+import IconAdd from "./../assets/icons/plus-solid-primary.svg";
+import IconDelete from "./../assets/icons/trash-solid-primary.svg";
+import IconMoveDown from "./../assets/icons/down-solid-primary.svg";
+import IconEdit from "./../assets/icons/pen-to-square-solid-primary.svg";
 import { setCurrentTopic, updateTopics } from "../data/dataConfig";
 import { v4 as uuidv4 } from "uuid";
+import { Text } from "./Text";
+import { Button } from "./Button";
 
 interface Props {
   topics?: Topic[];
@@ -117,7 +119,7 @@ export const TopicList: React.FC<Props> = (props) => {
         <Controls>
           <div></div>
           <div>
-            <Button onClick={onEditTopics}>
+            <Button name="edit" onClick={onEditTopics}>
               <img src={IconEdit} alt="Edit" />
             </Button>
           </div>
@@ -126,15 +128,15 @@ export const TopicList: React.FC<Props> = (props) => {
       {isEdit && (
         <Controls>
           <div>
-            <Button onClick={onAddTopic}>
+            <Button name="add" onClick={onAddTopic}>
               <img src={IconAdd} alt="Add Topic" />
             </Button>
           </div>
           <div>
-            <Button onClick={onSaveEditTopics}>
+            <Button name="save" onClick={onSaveEditTopics}>
               <img src={IconSave} alt="Save" />
             </Button>
-            <Button onClick={onCancelEditTopics}>
+            <Button name="cancel" onClick={onCancelEditTopics}>
               <img src={IconCancel} alt="Cancel" />
             </Button>
           </div>
@@ -168,7 +170,9 @@ export const TopicList: React.FC<Props> = (props) => {
             ?.sort((a, b) => a.order - b.order)
             .map((topic) => (
               <Row key={topic.id}>
+                {topic.order}
                 <Button
+                  name="up"
                   disabled={
                     editedTopics
                       .sort((a, b) => a.order - b.order)
@@ -179,6 +183,7 @@ export const TopicList: React.FC<Props> = (props) => {
                   <img src={IconMoveUp} alt="Move up" />
                 </Button>
                 <Button
+                  name="down"
                   disabled={
                     editedTopics
                       .sort((a, b) => a.order - b.order)
@@ -189,22 +194,21 @@ export const TopicList: React.FC<Props> = (props) => {
                 >
                   <img src={IconMoveDown} alt="Move down" />
                 </Button>
-                {topic.order}
                 <div className="main">
-                  <input
+                  <Text
+                    id={topic.id}
+                    label="Slug"
                     value={topic.slug}
-                    onChange={(e) =>
-                      onEditSlug(topic.id, e.currentTarget.value)
-                    }
+                    onChange={(value) => onEditSlug(topic.id, value)}
                   />
-                  <input
+                  <Text
+                    id={topic.id}
+                    label="Content"
                     value={topic.content}
-                    onChange={(e) =>
-                      onEditContent(topic.id, e.currentTarget.value)
-                    }
+                    onChange={(value) => onEditContent(topic.id, value)}
                   />
                 </div>
-                <Button onClick={() => onDeleteTopic(topic.id)}>
+                <Button name="delete" onClick={() => onDeleteTopic(topic.id)}>
                   <img src={IconDelete} alt="Delete" />
                 </Button>
               </Row>
@@ -217,8 +221,8 @@ export const TopicList: React.FC<Props> = (props) => {
 const Container = styled("div")({
   display: "flex",
   flexDirection: "column",
-  padding: "1rem",
   gap: "1rem",
+  width: "100%",
 });
 
 const List = styled("div")({
@@ -227,8 +231,8 @@ const List = styled("div")({
   button: {
     padding: "0.5rem",
   },
-  backgroundColor: "var(--white)",
-  color: "var(--black)",
+  backgroundColor: "var(--color-controlpanel-bgo)",
+  color: "var(--white)",
   borderRadius: "0.25rem",
   overflow: "hidden",
 });
@@ -238,7 +242,7 @@ const Row = styled("div")({
   flexDirection: "row",
   alignItems: "center",
   padding: "1rem",
-  gap: "0.25rem",
+  gap: "0.5rem",
   ".main": {
     flex: 1,
     display: "flex",
@@ -246,21 +250,18 @@ const Row = styled("div")({
     gap: "0.25rem",
   },
   "&:nth-child(even)": {
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "var(--color-controlpanel-bgo)",
   },
   "&.selected": {
-    backgroundColor: "var(--black)",
-    color: "var(--white)",
-  },
-  input: {
-    padding: "0.5rem",
-    border: "1px solid var(--black)",
-    borderRadius: "0.25rem",
-    flex: 1,
-    height: "1rem",
+    backgroundColor: "var(--color-primary)",
+    color: "var(--black)",
   },
   button: {
+    width: "3rem",
     padding: "0.5rem",
+  },
+  input: {
+    flex: 1,
   },
 });
 
@@ -276,24 +277,5 @@ const Controls = styled("div")({
     justifyContent: "center",
     alignItems: "center",
     gap: "0.5rem",
-  },
-});
-
-const Button = styled("button")({
-  border: "none",
-  borderRadius: "0.25rem",
-  padding: "0.5rem",
-  cursor: "pointer",
-  backgroundColor: "var(--white)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  img: {
-    width: "1rem",
-    height: "1rem",
-  },
-  "&:disabled": {
-    opacity: 0.15,
-    cursor: "not-allowed",
   },
 });

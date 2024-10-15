@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
+import { debounce } from "lodash";
 
 import { ConfigData, Panelist, PlayData, Score, Topic } from "../helpers/types";
 import { getConfigData, playDataRef } from "../data/dataConfig";
@@ -44,6 +45,27 @@ export const PageRemote: React.FC<Props> = (props) => {
     setPointsAwarded([]);
   }, [playData?.currentTopicId, playData?.currentMode]);
 
+  const collectAndSetScores = debounce((panelistId: string, count: number) => {
+    updateDoc(doc(db, col, "scores"), {
+      [panelistId]: increment(count),
+    });
+    pushCounts[panelistId] = 0;
+  }, 1000);
+
+  const pushCounts: { [key: string]: number } = {};
+
+  const updatePushCounts = useCallback(
+    (panelistId: string, incrementValue: number) => {
+      if (!pushCounts[panelistId]) {
+        pushCounts[panelistId] = 0;
+      }
+      pushCounts[panelistId] += incrementValue;
+      collectAndSetScores(panelistId, pushCounts[panelistId]);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   const onIncrement = (panelistId: string) => {
     if (points <= 0) return;
     setPoints(points - 1);
@@ -59,9 +81,10 @@ export const PageRemote: React.FC<Props> = (props) => {
         return [...prevPointsAwarded, { id: panelistId, value: 1 }];
       }
     });
-    updateDoc(doc(db, col, "scores"), {
-      [panelistId]: increment(1),
-    });
+    updatePushCounts(panelistId, 1);
+    // updateDoc(doc(db, col, "scores"), {
+    //   [panelistId]: increment(1),
+    // });
   };
 
   const onDecrement = (panelistId: string) => {
@@ -85,9 +108,10 @@ export const PageRemote: React.FC<Props> = (props) => {
         return [...prevPointsAwarded, { id: panelistId, value: -1 }];
       }
     });
-    updateDoc(doc(db, col, "scores"), {
-      [panelistId]: increment(-1),
-    });
+    updatePushCounts(panelistId, -1);
+    // updateDoc(doc(db, col, "scores"), {
+    //   [panelistId]: increment(-1),
+    // });
   };
 
   useEffect(() => {
@@ -108,11 +132,15 @@ export const PageRemote: React.FC<Props> = (props) => {
   return (
     <Page>
       <TopicContent>
-        {
+        {playData.currentTopicId ? (
           configData.topics.find(
             (topic) => topic.id === playData.currentTopicId
           )?.content
-        }
+        ) : playData.currentMode !== "play" ? (
+          <Loading>Waiting for users to join</Loading>
+        ) : (
+          <Loading>Waiting for topic</Loading>
+        )}
       </TopicContent>
       <PanelistGrid>
         {configData.panelists.map((panelist) => (
@@ -122,7 +150,20 @@ export const PageRemote: React.FC<Props> = (props) => {
             score={pointsAwarded.find((score) => score.id === panelist.id)}
             type="controller"
             onIncrement={onIncrement}
+            disableIncrement={
+              points <= 0 ||
+              !playData.currentTopicId ||
+              playData.currentMode !== "play"
+            }
             onDecrement={onDecrement}
+            disableDecrement={
+              points >= 40 ||
+              !playData.currentTopicId ||
+              pointsAwarded.find((score) => score.id === panelist.id)?.value ===
+                0 ||
+              !pointsAwarded.find((score) => score.id === panelist.id) ||
+              playData.currentMode !== "play"
+            }
           />
         ))}
       </PanelistGrid>
@@ -137,8 +178,14 @@ export const PageRemote: React.FC<Props> = (props) => {
 
 const TopicContent = styled("div")({
   padding: "1rem",
+  margin: "1rem 0",
   fontSize: "1.5rem",
   fontWeight: "bold",
+  height: "6rem",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "var(--black)",
 });
 
 const PanelistGrid = styled("div")({
@@ -153,3 +200,5 @@ const PointsHelper = styled("div")({
   padding: "1rem",
   fontWeight: "bold",
 });
+
+const Loading = styled("div")({});

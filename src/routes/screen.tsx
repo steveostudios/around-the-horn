@@ -94,9 +94,11 @@ export const PageScreen: React.FC<Props> = (props) => {
   if (playData.currentMode === Mode.INSTRUCTION) {
     return (
       <Page>
-        <canvas ref={canvasRef} />
         <Instructions>
           <p>Scan this code to play.</p>
+        </Instructions>
+        <QRCodeCanvas ref={canvasRef} />
+        <Instructions>
           <p>
             For each topic you will be given {POINTS} points to give out or take
             away. If a particular panelist deserves points, dish them out. If
@@ -156,4 +158,10 @@ const Instructions = styled("div")({
   justifyContent: "center",
   fontSize: "1.5rem",
   fontWeight: "bold",
+});
+
+const QRCodeCanvas = styled("canvas")({
+  margin: "0 auto",
+  width: "200px",
+  height: "200px",
 });

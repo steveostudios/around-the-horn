@@ -10,6 +10,8 @@ import { ConfigData, Mode, PlayData } from "../helpers/types";
 import { getDoc, onSnapshot, updateDoc } from "@firebase/firestore";
 import { TopicList } from "../components/TopicList";
 import { Button } from "../components/Button";
+import { Column, Header, Row } from "../layout";
+import styled from "@emotion/styled";
 
 interface Props {
   children?: React.ReactNode;
@@ -68,35 +70,59 @@ export const PageControl: React.FC<Props> = (props) => {
   };
 
   return (
-    <Page>
-      <div>
-        Scores
-        <div>
-          <Button onClick={onReset}>Reset Scores</Button>
-        </div>
-      </div>
+    <Page isAdmin>
+      <ControlPanel>
+        <Column>
+          <Header label="Scores" />
+          <Row>
+            <Button name="reset" onClick={onReset}>
+              Reset Scores
+            </Button>
+          </Row>
+        </Column>
+        <Column>
+          <Header label="Modes" />
+          <Row>
+            <Button
+              name="instruction_mode"
+              onClick={() => onChangeMode(Mode.INSTRUCTION)}
+              selected={playData?.currentMode === Mode.INSTRUCTION}
+            >
+              Instruction
+            </Button>
+            <Button
+              name="play_mode"
+              onClick={() => onChangeMode(Mode.PLAY)}
+              selected={playData?.currentMode === Mode.PLAY}
+            >
+              Play
+            </Button>
+          </Row>
+        </Column>
+      </ControlPanel>
 
-      <div>
-        Modes
-        <div>
-          <Button
-            onClick={() => onChangeMode(Mode.INSTRUCTION)}
-            disabled={playData?.currentMode === Mode.INSTRUCTION}
-          >
-            Instruction
-          </Button>
-          <Button
-            onClick={() => onChangeMode(Mode.PLAY)}
-            disabled={playData?.currentMode === Mode.PLAY}
-          >
-            Play
-          </Button>
-        </div>
-      </div>
-      <TopicList
-        topics={configData?.topics}
-        currentTopicId={playData?.currentTopicId}
-      />
+      <ControlPanel>
+        <Column>
+          <Header label="Topics" />
+          <TopicList
+            topics={configData?.topics}
+            currentTopicId={playData?.currentTopicId}
+          />
+        </Column>
+      </ControlPanel>
     </Page>
   );
 };
+
+const ControlPanel = styled("div")({
+  // position: "absolute",
+  // top: "0",
+  width: "calc(100% - 4rem)",
+  gap: "2rem",
+  display: "flex",
+  flexDirection: "row",
+  padding: "1rem",
+  backgroundColor: "var(--color-controlpanel-bgo)",
+  borderRadius: "1rem",
+  margin: "1rem",
+});

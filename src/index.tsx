@@ -6,13 +6,16 @@ import { PageScreen } from "./routes/screen";
 import { PageControl } from "./routes/control";
 import { PageRemote } from "./routes/remote";
 import { panelists, topics, scores } from "./helpers/fakedata";
-import { Header } from "./components/Header";
 
 const router = createBrowserRouter([
   {
-    path: "/remote",
+    path: "/control",
+    element: <PageControl>children</PageControl>,
+  },
+  {
+    path: "/screenview",
     element: (
-      <PageRemote
+      <PageScreen
         panelists={panelists}
         topics={topics}
         currentTopicId="1"
@@ -21,13 +24,9 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/control",
-    element: <PageControl>children</PageControl>,
-  },
-  {
     path: "/",
     element: (
-      <PageScreen
+      <PageRemote
         panelists={panelists}
         topics={topics}
         currentTopicId="1"
@@ -42,7 +41,6 @@ if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <React.StrictMode>
-      <Header />
       <RouterProvider router={router} />
     </React.StrictMode>
   );

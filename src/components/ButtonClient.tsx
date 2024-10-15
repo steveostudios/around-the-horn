@@ -10,7 +10,7 @@ interface Props {
   children?: React.ReactNode;
 }
 
-export const Button: React.FC<Props> = (props) => {
+export const ButtonClient: React.FC<Props> = (props) => {
   const { name, label, onClick, disabled, children } = props;
 
   const onClickHandler = () => {
@@ -36,19 +36,18 @@ const Container = styled("button")(
     opacity: props.disabled ? 0.5 : 1,
     cursor: props.disabled ? "not-allowed" : "pointer",
     borderRadius: "0.25rem",
-    padding: "0.5rem 1rem",
-    border: "2px solid var(--color-primary)",
-    backgroundColor: props.selected ? "var(--color-primary)" : "transparent",
-    color: props.selected
-      ? "var(--color-controlpanel-bg)"
-      : "var(--color-primary)",
-    width: "100%",
+    // padding: "0.5rem 1rem",
+    border: "none",
+    backgroundColor: "var(--white)",
+    color: "var(--black)",
+    width: "2rem",
+    height: "2rem",
     alignItems: "center",
     justifyContent: "center",
     fontWeight: "bold",
     img: {
-      width: "0.75rem",
-      height: "0.75rem",
+      width: "1rem",
+      height: "1rem",
     },
   })
 );

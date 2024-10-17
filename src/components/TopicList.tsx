@@ -8,10 +8,11 @@ import IconAdd from "./../assets/icons/plus-solid-primary.svg";
 import IconDelete from "./../assets/icons/trash-solid-primary.svg";
 import IconMoveDown from "./../assets/icons/down-solid-primary.svg";
 import IconEdit from "./../assets/icons/pen-to-square-solid-primary.svg";
-import { setCurrentTopic, updateTopics } from "../data/dataConfig";
+import { configDataRef, playDataRef } from "../data/dataConfig";
 import { v4 as uuidv4 } from "uuid";
 import { Text } from "./Text";
 import { Button } from "./Button";
+import { updateDoc } from "@firebase/firestore";
 
 interface Props {
   topics?: Topic[];
@@ -26,8 +27,9 @@ export const TopicList: React.FC<Props> = (props) => {
 
   // set current topic
   const onSetCurrentTopic = (id: string | null) => {
-    console.log("Set current topic", id);
-    setCurrentTopic(id);
+    updateDoc(playDataRef, {
+      currentTopicId: id,
+    });
   };
 
   // click edit topics
@@ -45,7 +47,9 @@ export const TopicList: React.FC<Props> = (props) => {
   // click save edit topics
   const onSaveEditTopics = () => {
     setIsEdit(false);
-    updateTopics(editedTopics || []);
+    updateDoc(configDataRef, {
+      topics: editedTopics || [],
+    });
   };
 
   const onEditSlug = (id: string, value: string) => {

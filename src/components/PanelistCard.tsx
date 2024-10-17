@@ -13,13 +13,14 @@ interface Props {
   onDecrement?: (panelistId: string) => void;
   disableIncrement?: boolean;
   disableDecrement?: boolean;
+  disabled?: boolean;
 }
 
 export const PanelistCard: React.FC<Props> = (props) => {
-  const { panelist, score, type } = props;
+  const { panelist, score, type, disabled } = props;
 
   return (
-    <Container key={panelist.id}>
+    <Container key={panelist.id} disabled={disabled || false}>
       <img
         src={panelist.imgUrl || ""}
         alt={panelist.name}
@@ -52,11 +53,12 @@ export const PanelistCard: React.FC<Props> = (props) => {
   );
 };
 
-const Container = styled("div")({
+const Container = styled("div")((props: { disabled: boolean }) => ({
   display: "flex",
-  flexDirection: "column",
+  "flex-direction": "column",
   alignItems: "center",
   gap: "0.5rem",
+  opacity: props.disabled ? 0.5 : 1,
   padding: "0.25rem",
   fontSize: "1.25rem",
   backgroundColor: "var(--black)",
@@ -105,4 +107,4 @@ const Container = styled("div")({
     backgroundColor: "#B80A43",
     borderRadius: "0 0 calc(1rem - 0.25rem) calc(1rem - 0.25rem)",
   },
-});
+}));

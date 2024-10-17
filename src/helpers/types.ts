@@ -29,8 +29,13 @@ export enum Mode {
   INSTRUCTION = "instruction",
 }
 
+export enum ScoreType {
+  AUDIENCE = "audience",
+  MODERATOR = "moderator",
+}
+
 export interface PlayData {
   currentTopicId: string;
-  scores: Score[];
   currentMode: Mode;
+  currentScoreType: ScoreType;
 }

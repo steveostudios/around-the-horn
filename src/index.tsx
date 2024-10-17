@@ -5,34 +5,24 @@ import "./index.css";
 import { PageScreen } from "./routes/screen";
 import { PageControl } from "./routes/control";
 import { PageRemote } from "./routes/remote";
-import { panelists, topics, scores } from "./helpers/fakedata";
+import { PageModerator } from "./routes/moderator";
 
 const router = createBrowserRouter([
   {
     path: "/control",
-    element: <PageControl>children</PageControl>,
+    element: <PageControl />,
   },
   {
     path: "/screenview",
-    element: (
-      <PageScreen
-        panelists={panelists}
-        topics={topics}
-        currentTopicId="1"
-        scores={scores}
-      />
-    ),
+    element: <PageScreen />,
+  },
+  {
+    path: "/moderator",
+    element: <PageModerator />,
   },
   {
     path: "/",
-    element: (
-      <PageRemote
-        panelists={panelists}
-        topics={topics}
-        currentTopicId="1"
-        scores={scores}
-      />
-    ),
+    element: <PageRemote />,
   },
 ]);
 

@@ -9,27 +9,16 @@ import { PanelistCard } from "../components/PanelistCard";
 import { doc, increment, onSnapshot, updateDoc } from "@firebase/firestore";
 import { col, db } from "../data/config";
 
-export const PageRemote: React.FC = () => {
+export const PageModerator: React.FC = () => {
   const [configData, setConfigData] = React.useState<ConfigData>();
   const [playData, setPlayData] = React.useState<PlayData>();
   const [points, setPoints] = React.useState(40);
   const [pointsAwarded, setPointsAwarded] = React.useState<Score[]>([]);
 
-  // fetch config data
-  useEffect(() => {
-    (async () => {
-      const configData = await getConfigData();
-      setConfigData({
-        panelists: configData.panelists,
-        topics: configData.topics,
-      });
-    })();
-  }, []);
-
-  // stream play data
   useEffect(() => {
     const unsubscribe = onSnapshot(playDataRef, (snap) => {
       if (snap.exists()) {
+        console.log("Data changed", snap.data());
         const data = snap.data();
         setPlayData({
           currentTopicId: data.currentTopicId,
@@ -42,13 +31,12 @@ export const PageRemote: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  // reset the points when the topic changes
+  // reset the points
   useEffect(() => {
     setPoints(40);
     setPointsAwarded([]);
   }, [playData?.currentTopicId, playData?.currentMode]);
 
-  // debounce the score updates
   const collectAndSetScores = debounce((panelistId: string, count: number) => {
     updateDoc(doc(db, col, "scores"), {
       [panelistId]: increment(count),
@@ -58,7 +46,6 @@ export const PageRemote: React.FC = () => {
 
   const pushCounts: { [key: string]: number } = {};
 
-  // update the push counts
   const updatePushCounts = useCallback(
     (panelistId: string, incrementValue: number) => {
       if (!pushCounts[panelistId]) {
@@ -71,7 +58,6 @@ export const PageRemote: React.FC = () => {
     []
   );
 
-  // increment the points awarded
   const onIncrement = (panelistId: string) => {
     if (points <= 0) return;
     setPoints(points - 1);
@@ -88,9 +74,11 @@ export const PageRemote: React.FC = () => {
       }
     });
     updatePushCounts(panelistId, 1);
+    // updateDoc(doc(db, col, "scores"), {
+    //   [panelistId]: increment(1),
+    // });
   };
 
-  // decrement the points awarded
   const onDecrement = (panelistId: string) => {
     if (points >= 40) return;
     if (
@@ -113,7 +101,21 @@ export const PageRemote: React.FC = () => {
       }
     });
     updatePushCounts(panelistId, -1);
+    // updateDoc(doc(db, col, "scores"), {
+    //   [panelistId]: increment(-1),
+    // });
   };
+
+  useEffect(() => {
+    (async () => {
+      const configData = await getConfigData();
+      setConfigData({
+        panelists: configData.panelists,
+        topics: configData.topics,
+      });
+      console.log(configData);
+    })();
+  }, []);
 
   if (!configData || !playData) {
     return <div>Loading...</div>;
@@ -137,9 +139,6 @@ export const PageRemote: React.FC = () => {
           <PanelistCard
             key={panelist.id}
             panelist={panelist}
-            disabled={
-              playData.currentMode !== "play" || !playData.currentTopicId
-            }
             score={pointsAwarded.find((score) => score.id === panelist.id)}
             type="controller"
             onIncrement={onIncrement}

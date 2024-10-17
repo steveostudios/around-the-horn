@@ -4,6 +4,7 @@ import { slugify, titleCase } from "./../helpers/string";
 interface Props {
   name: string;
   label?: string;
+  fitWidth?: boolean;
   onClick: () => void;
   disabled?: boolean;
   selected?: boolean;
@@ -22,6 +23,7 @@ export const Button: React.FC<Props> = (props) => {
       onClick={onClickHandler}
       disabled={disabled || false}
       selected={props.selected || false}
+      fitWidth={props.fitWidth || false}
     >
       {children && children}
       {label && titleCase(label)}
@@ -30,7 +32,7 @@ export const Button: React.FC<Props> = (props) => {
 };
 
 const Container = styled("button")(
-  (props: { disabled: boolean; selected: boolean }) => ({
+  (props: { disabled: boolean; selected: boolean; fitWidth: boolean }) => ({
     display: "flex",
     gap: "0.5rem",
     opacity: props.disabled ? 0.5 : 1,
@@ -42,7 +44,7 @@ const Container = styled("button")(
     color: props.selected
       ? "var(--color-controlpanel-bg)"
       : "var(--color-primary)",
-    width: "100%",
+    width: props.fitWidth ? "undefined" : "100%",
     alignItems: "center",
     justifyContent: "center",
     fontWeight: "bold",

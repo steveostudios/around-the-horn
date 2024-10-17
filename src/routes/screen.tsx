@@ -1,15 +1,13 @@
 import React, { useEffect } from "react";
 import styled from "@emotion/styled";
 
+import { ConfigData, Mode, PlayData, Score } from "../helpers/types";
 import {
-  ConfigData,
-  Mode,
-  Panelist,
-  PlayData,
-  Score,
-  Topic,
-} from "../helpers/types";
-import { getConfigData, playDataRef, scoresDataRef } from "../data/dataConfig";
+  getConfigData,
+  moderatorScoresDataRef,
+  playDataRef,
+  scoresDataRef,
+} from "../data/dataConfig";
 import { Page } from "../components/Page";
 import { PanelistCard } from "../components/PanelistCard";
 import { onSnapshot } from "@firebase/firestore";
@@ -18,55 +16,15 @@ import { TopicsBar } from "../components/TopicsBar";
 import QRCode from "qrcode";
 import { HOST, POINTS } from "../helpers/env";
 
-interface Props {
-  children?: React.ReactNode;
-  currentTopicId: string;
-  panelists: Panelist[];
-  topics: Topic[];
-  scores: Score[];
-}
-
-export const PageScreen: React.FC<Props> = (props) => {
+export const PageScreen: React.FC = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
   const [configData, setConfigData] = React.useState<ConfigData>();
   const [playData, setPlayData] = React.useState<PlayData>();
   const [scores, setScores] = React.useState<Score[]>([]);
+  const [moderatorScores, setModeratorScores] = React.useState<Score[]>([]);
 
-  useEffect(() => {
-    const unsubscribe = onSnapshot(playDataRef, (snap) => {
-      if (snap.exists()) {
-        console.log("Data changed", snap.data());
-        const data = snap.data();
-        setPlayData({
-          currentTopicId: data.currentTopicId,
-          currentMode: data.currentMode,
-          scores: [],
-        });
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = onSnapshot(scoresDataRef, (snap) => {
-      if (snap.exists()) {
-        console.log("Data changed", snap.data());
-        const data = snap.data();
-        const list = Object.keys(data).map((key) => ({
-          id: key,
-          value: data[key],
-        }));
-
-        setScores(list);
-        console.log(data.scores);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
+  // fetch config data
   useEffect(() => {
     (async () => {
       const configData = await getConfigData();
@@ -75,8 +33,59 @@ export const PageScreen: React.FC<Props> = (props) => {
         topics: configData.topics,
       });
     })();
-  }, [props.currentTopicId]);
+  }, []);
 
+  // stream play data
+  useEffect(() => {
+    const unsubscribe = onSnapshot(playDataRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        setPlayData({
+          currentTopicId: data.currentTopicId,
+          currentMode: data.currentMode,
+          currentScoreType: data.currentScoreType,
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // stream scores data
+  useEffect(() => {
+    const unsubscribe = onSnapshot(scoresDataRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        const list = Object.keys(data).map((key) => ({
+          id: key,
+          value: data[key],
+        }));
+
+        setScores(list);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // stream moderator scores data
+  useEffect(() => {
+    const unsubscribe = onSnapshot(moderatorScoresDataRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        const list = Object.keys(data).map((key) => ({
+          id: key,
+          value: data[key],
+        }));
+
+        setModeratorScores(list);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // generate QR code
   useEffect(() => {
     if (!canvasRef.current) {
       return;
@@ -112,16 +121,19 @@ export const PageScreen: React.FC<Props> = (props) => {
 
   return (
     <Page>
+      <div>{playData.currentScoreType} Score</div>
       <PanelistGrid>
         {configData.panelists.map((panelist) => (
           <PanelistCard
             key={panelist.id}
             panelist={panelist}
             score={
-              scores.find((score) => score.id === panelist.id) || {
-                id: panelist.id,
-                value: 0,
-              }
+              playData.currentScoreType === "moderator"
+                ? moderatorScores.find((score) => score.id === panelist.id)
+                : scores.find((score) => score.id === panelist.id) || {
+                    id: panelist.id,
+                    value: 0,
+                  }
             }
             type="viewer"
           />
@@ -143,10 +155,16 @@ export const PageScreen: React.FC<Props> = (props) => {
 };
 
 const PanelistGrid = styled("div")({
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fill, minmax(256px, 1fr))",
+  display: "flex",
+  flexFlow: "row wrap",
+  alignItems: "center",
+  justifyContent: "center",
+  alignSelf: "center",
   gap: "1rem",
-  padding: "1rem",
+  maxWidth: "100%",
+  "> div": {
+    flex: "1 1 256px",
+  },
 });
 
 const Instructions = styled("div")({

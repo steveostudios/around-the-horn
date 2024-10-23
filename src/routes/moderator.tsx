@@ -202,9 +202,4 @@ const PanelistGrid = styled("div")({
   placeItems: "center",
 });
 
-const PointsHelper = styled("div")({
-  padding: "1rem",
-  fontWeight: "bold",
-});
-
 const Loading = styled("div")({});

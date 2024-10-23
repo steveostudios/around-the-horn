@@ -8,6 +8,8 @@ import { ButtonClient } from "./ButtonClient";
 interface Props {
   panelist: Panelist;
   score?: Score;
+  percent?: string;
+  scoreType: "points" | "percent";
   type: "controller" | "viewer";
   onIncrement?: (panelistId: string) => void;
   onDecrement?: (panelistId: string) => void;
@@ -29,7 +31,12 @@ export const PanelistCard: React.FC<Props> = (props) => {
         }}
       />
       <div>{panelist.name}</div>
-      {type === "viewer" && <div className="score">{score?.value || 0}</div>}
+      {type === "viewer" && props.scoreType !== "percent" && (
+        <div className="score">{score?.value || 0}</div>
+      )}
+      {type === "viewer" && props.scoreType === "percent" && (
+        <div className="score">{props.percent}%</div>
+      )}
       {type === "controller" && (
         <div className="controller">
           <ButtonClient

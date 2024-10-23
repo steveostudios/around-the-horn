@@ -8,11 +8,12 @@ import { Page } from "../components/Page";
 import { PanelistCard } from "../components/PanelistCard";
 import { doc, increment, onSnapshot, updateDoc } from "@firebase/firestore";
 import { col, db } from "../data/config";
+import { POINTS } from "../helpers/env";
 
 export const PageRemote: React.FC = () => {
   const [configData, setConfigData] = React.useState<ConfigData>();
   const [playData, setPlayData] = React.useState<PlayData>();
-  const [points, setPoints] = React.useState(40);
+  const [points, setPoints] = React.useState(POINTS);
   const [pointsAwarded, setPointsAwarded] = React.useState<Score[]>([]);
 
   // fetch config data
@@ -44,7 +45,7 @@ export const PageRemote: React.FC = () => {
 
   // reset the points when the topic changes
   useEffect(() => {
-    setPoints(40);
+    setPoints(POINTS);
     setPointsAwarded([]);
   }, [playData?.currentTopicId, playData?.currentMode]);
 
@@ -92,7 +93,7 @@ export const PageRemote: React.FC = () => {
 
   // decrement the points awarded
   const onDecrement = (panelistId: string) => {
-    if (points >= 40) return;
+    if (points >= POINTS) return;
     if (
       (pointsAwarded.find((panelist) => panelist.id === panelistId)?.value ??
         0) <= 0
@@ -131,6 +132,7 @@ export const PageRemote: React.FC = () => {
         ) : (
           <Loading>Waiting for topic</Loading>
         )}
+        <PointsCard>Points to award: {points}</PointsCard>
       </TopicContent>
       <PanelistGrid>
         {configData.panelists.map((panelist) => (
@@ -140,6 +142,7 @@ export const PageRemote: React.FC = () => {
             disabled={
               playData.currentMode !== "play" || !playData.currentTopicId
             }
+            scoreType="points"
             score={pointsAwarded.find((score) => score.id === panelist.id)}
             type="controller"
             onIncrement={onIncrement}
@@ -150,7 +153,7 @@ export const PageRemote: React.FC = () => {
             }
             onDecrement={onDecrement}
             disableDecrement={
-              points >= 40 ||
+              points >= POINTS ||
               !playData.currentTopicId ||
               pointsAwarded.find((score) => score.id === panelist.id)?.value ===
                 0 ||
@@ -160,11 +163,6 @@ export const PageRemote: React.FC = () => {
           />
         ))}
       </PanelistGrid>
-      <PointsHelper>{points} to award this topic</PointsHelper>
-      <PointsHelper>
-        Click on the panelist to award points. Click on the points to take them
-        back.
-      </PointsHelper>
     </Page>
   );
 };
@@ -179,6 +177,29 @@ const TopicContent = styled("div")({
   alignItems: "center",
   justifyContent: "center",
   backgroundColor: "var(--black)",
+  position: "relative",
+});
+
+const PointsCard = styled("div")({
+  position: "absolute",
+  top: "calc(100% - 1rem)",
+  padding: "0.5rem",
+  borderRadius: "0.5rem",
+  backgroundColor: "var(--white)",
+  color: "var(--black)",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: "1rem",
+  justifyContent: "center",
+  fontSize: "1.5rem",
+  fontWeight: "bold",
+  width: "80%",
+  ".instructions": {
+    textAlign: "center",
+    fontWeight: "normal",
+    fontSize: "1rem",
+  },
 });
 
 const PanelistGrid = styled("div")({

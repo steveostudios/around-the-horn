@@ -18,6 +18,6 @@ const Container = styled("div")({
     padding: "1rem",
     margin: "0 auto",
     maxWidth: "80%",
-    maxHeight: "10rem",
+    maxHeight: "6rem",
   },
 });

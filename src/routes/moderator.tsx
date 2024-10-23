@@ -8,11 +8,12 @@ import { Page } from "../components/Page";
 import { PanelistCard } from "../components/PanelistCard";
 import { doc, increment, onSnapshot, updateDoc } from "@firebase/firestore";
 import { col, db } from "../data/config";
+import { MODERATOR_POINTS } from "../helpers/env";
 
 export const PageModerator: React.FC = () => {
   const [configData, setConfigData] = React.useState<ConfigData>();
   const [playData, setPlayData] = React.useState<PlayData>();
-  const [points, setPoints] = React.useState(40);
+  const [points, setPoints] = React.useState(MODERATOR_POINTS);
   const [pointsAwarded, setPointsAwarded] = React.useState<Score[]>([]);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export const PageModerator: React.FC = () => {
 
   // reset the points
   useEffect(() => {
-    setPoints(40);
+    setPoints(MODERATOR_POINTS);
     setPointsAwarded([]);
   }, [playData?.currentTopicId, playData?.currentMode]);
 
@@ -74,13 +75,10 @@ export const PageModerator: React.FC = () => {
       }
     });
     updatePushCounts(panelistId, 1);
-    // updateDoc(doc(db, col, "scores"), {
-    //   [panelistId]: increment(1),
-    // });
   };
 
   const onDecrement = (panelistId: string) => {
-    if (points >= 40) return;
+    if (points >= MODERATOR_POINTS) return;
     if (
       (pointsAwarded.find((panelist) => panelist.id === panelistId)?.value ??
         0) <= 0
@@ -101,9 +99,6 @@ export const PageModerator: React.FC = () => {
       }
     });
     updatePushCounts(panelistId, -1);
-    // updateDoc(doc(db, col, "scores"), {
-    //   [panelistId]: increment(-1),
-    // });
   };
 
   useEffect(() => {
@@ -133,12 +128,14 @@ export const PageModerator: React.FC = () => {
         ) : (
           <Loading>Waiting for topic</Loading>
         )}
+        <PointsCard>Points to award: {points}</PointsCard>
       </TopicContent>
       <PanelistGrid>
         {configData.panelists.map((panelist) => (
           <PanelistCard
             key={panelist.id}
             panelist={panelist}
+            scoreType="points"
             score={pointsAwarded.find((score) => score.id === panelist.id)}
             type="controller"
             onIncrement={onIncrement}
@@ -149,7 +146,7 @@ export const PageModerator: React.FC = () => {
             }
             onDecrement={onDecrement}
             disableDecrement={
-              points >= 40 ||
+              points >= MODERATOR_POINTS ||
               !playData.currentTopicId ||
               pointsAwarded.find((score) => score.id === panelist.id)?.value ===
                 0 ||
@@ -159,11 +156,6 @@ export const PageModerator: React.FC = () => {
           />
         ))}
       </PanelistGrid>
-      <PointsHelper>{points} to award this topic</PointsHelper>
-      <PointsHelper>
-        Click on the panelist to award points. Click on the points to take them
-        back.
-      </PointsHelper>
     </Page>
   );
 };
@@ -178,6 +170,28 @@ const TopicContent = styled("div")({
   alignItems: "center",
   justifyContent: "center",
   backgroundColor: "var(--black)",
+  position: "relative",
+});
+const PointsCard = styled("div")({
+  position: "absolute",
+  top: "calc(100% - 1rem)",
+  padding: "0.5rem",
+  borderRadius: "0.5rem",
+  backgroundColor: "var(--white)",
+  color: "var(--black)",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: "1rem",
+  justifyContent: "center",
+  fontSize: "1.5rem",
+  fontWeight: "bold",
+  width: "80%",
+  ".instructions": {
+    textAlign: "center",
+    fontWeight: "normal",
+    fontSize: "1rem",
+  },
 });
 
 const PanelistGrid = styled("div")({

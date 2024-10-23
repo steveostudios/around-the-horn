@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
-import { Topic } from "../helpers/types";
+import { Mode, Topic } from "../helpers/types";
 import IconMoveUp from "./../assets/icons/up-solid-primary.svg";
 import IconSave from "./../assets/icons/floppy-disk-solid-primary.svg";
 import IconCancel from "./../assets/icons/xmark-solid-primary.svg";
@@ -17,6 +17,7 @@ import { updateDoc } from "@firebase/firestore";
 interface Props {
   topics?: Topic[];
   currentTopicId?: string;
+  currentMode?: Mode;
 }
 
 export const TopicList: React.FC<Props> = (props) => {
@@ -27,6 +28,7 @@ export const TopicList: React.FC<Props> = (props) => {
 
   // set current topic
   const onSetCurrentTopic = (id: string | null) => {
+    if (props.currentMode === Mode.INSTRUCTION) return;
     updateDoc(playDataRef, {
       currentTopicId: id,
     });
@@ -78,7 +80,6 @@ export const TopicList: React.FC<Props> = (props) => {
     if (!editedTopics) {
       return;
     }
-    console.log(id, direction);
     const currentIndex = editedTopics.findIndex((topic) => topic.id === id);
     if (currentIndex === -1) {
       return;

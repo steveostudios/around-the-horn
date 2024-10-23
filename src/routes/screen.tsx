@@ -15,6 +15,7 @@ import { CurrentTopicBar } from "../components/CurrentTopicBar";
 import { TopicsBar } from "../components/TopicsBar";
 import QRCode from "qrcode";
 import { HOST, POINTS } from "../helpers/env";
+import { ScoreTypeBar } from "../components/ScoreTypeBar";
 
 export const PageScreen: React.FC = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -92,7 +93,7 @@ export const PageScreen: React.FC = () => {
     }
 
     QRCode.toCanvas(canvasRef.current, HOST, {
-      width: 200,
+      width: 400,
     });
   }, [playData]);
 
@@ -103,16 +104,14 @@ export const PageScreen: React.FC = () => {
   if (playData.currentMode === Mode.INSTRUCTION) {
     return (
       <Page>
-        <Instructions>
-          <p>Scan this code to play.</p>
-        </Instructions>
         <QRCodeCanvas ref={canvasRef} />
         <Instructions>
+          <p>Scan to play.</p>
           <p>
             For each topic you will be given {POINTS} points to give out or take
-            away. If a particular panelist deserves points, dish them out. If
-            not, retract them. You will be given a new set of {POINTS} points
-            each topic. Your points to give out do not roll over.
+            away.
+            <br />
+            Your points to give out do not roll over.
           </p>
         </Instructions>
       </Page>
@@ -121,23 +120,37 @@ export const PageScreen: React.FC = () => {
 
   return (
     <Page>
-      <div>{playData.currentScoreType} Score</div>
+      <ScoreTypeBar currentScoreType={playData.currentScoreType} />
       <PanelistGrid>
-        {configData.panelists.map((panelist) => (
-          <PanelistCard
-            key={panelist.id}
-            panelist={panelist}
-            score={
-              playData.currentScoreType === "moderator"
-                ? moderatorScores.find((score) => score.id === panelist.id)
-                : scores.find((score) => score.id === panelist.id) || {
-                    id: panelist.id,
-                    value: 0,
-                  }
-            }
-            type="viewer"
-          />
-        ))}
+        {configData.panelists.map((panelist) => {
+          const score =
+            playData.currentScoreType === "moderator"
+              ? moderatorScores.find((score) => score.id === panelist.id)
+              : scores.find((score) => score.id === panelist.id) || {
+                  id: panelist.id,
+                  value: 0,
+                };
+
+          const total = scores.reduce((acc, score) => acc + score.value, 0);
+          const percent =
+            total > 0
+              ? (((score?.value || 0) / total) * 100).toFixed(2)
+              : "0.00";
+          // total > 0 ? Math.round(((score?.value || 0) / total) * 100) : 0;
+
+          return (
+            <PanelistCard
+              key={panelist.id}
+              panelist={panelist}
+              score={score}
+              scoreType={
+                playData.currentScoreType === "moderator" ? "points" : "percent"
+              }
+              percent={percent}
+              type="viewer"
+            />
+          );
+        })}
       </PanelistGrid>
 
       <CurrentTopicBar
@@ -150,6 +163,7 @@ export const PageScreen: React.FC = () => {
         topics={configData.topics}
         currentTopicId={playData.currentTopicId}
       />
+      <Spacer />
     </Page>
   );
 };
@@ -161,6 +175,7 @@ const PanelistGrid = styled("div")({
   justifyContent: "center",
   alignSelf: "center",
   gap: "1rem",
+  flex: 1,
   maxWidth: "100%",
   "> div": {
     flex: "1 1 256px",
@@ -172,14 +187,26 @@ const Instructions = styled("div")({
   flexDirection: "column",
   alignItems: "center",
   gap: "1rem",
-  padding: "1rem",
+  padding: "2rem",
   justifyContent: "center",
   fontSize: "1.5rem",
   fontWeight: "bold",
+  backgroundColor: "var(--black)",
+  color: "var(--white)",
+  textAlign: "center",
+  p: {
+    margin: 0,
+    padding: 0,
+  },
 });
 
 const QRCodeCanvas = styled("canvas")({
   margin: "0 auto",
-  width: "200px",
-  height: "200px",
+  padding: "4rem",
+  width: "400px",
+  height: "400px",
+});
+
+const Spacer = styled("div")({
+  height: "6rem",
 });

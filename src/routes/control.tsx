@@ -144,6 +144,13 @@ export const PageControl: React.FC = () => {
 
   // change the mode
   const onChangeMode = async (mode: string) => {
+    if (mode === Mode.INSTRUCTION) {
+      updateDoc(playDataRef, {
+        currentMode: mode,
+        currentTopicId: null,
+      });
+      return;
+    }
     updateDoc(playDataRef, {
       currentMode: mode,
     });
@@ -176,7 +183,7 @@ export const PageControl: React.FC = () => {
           </Row>
           {configData?.panelists.map((panelist) => (
             <Row key={panelist.id}>
-              {panelist.name}
+              <PanelistName>{panelist.name}</PanelistName>
 
               <Text
                 id={panelist.id}
@@ -184,6 +191,22 @@ export const PageControl: React.FC = () => {
                 value={(
                   scores.find((score) => score.id === panelist.id)?.value || 0
                 ).toString()}
+                readonly
+              />
+              <Text
+                id={panelist.id}
+                label="score"
+                value={
+                  (
+                    ((scores.find((score) => score.id === panelist.id)?.value ||
+                      0 ||
+                      0) /
+                      scores.reduce((acc, score) => acc + score.value, 0)) *
+                    100
+                  )
+                    .toFixed(2)
+                    .toString() + "%"
+                }
                 readonly
               />
             </Row>
@@ -273,6 +296,7 @@ export const PageControl: React.FC = () => {
           <TopicList
             topics={configData?.topics}
             currentTopicId={playData?.currentTopicId}
+            currentMode={playData?.currentMode}
           />
         </Column>
       </ControlPanel>

@@ -198,11 +198,11 @@ export const PageControl: React.FC = () => {
                 label="score"
                 value={
                   (
-                    ((scores.find((score) => score.id === panelist.id)?.value ||
+                    (scores.find((score) => score.id === panelist.id)?.value ||
                       0 ||
                       0) /
-                      scores.reduce((acc, score) => acc + score.value, 0)) *
-                    100
+                      scores.reduce((acc, score) => acc + score.value, 0) ||
+                    0 * 100
                   )
                     .toFixed(2)
                     .toString() + "%"

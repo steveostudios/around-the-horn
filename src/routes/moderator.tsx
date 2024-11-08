@@ -8,7 +8,7 @@ import { Page } from "../components/Page";
 import { PanelistCard } from "../components/PanelistCard";
 import { doc, increment, onSnapshot, updateDoc } from "@firebase/firestore";
 import { col, db } from "../data/config";
-import { MODERATOR_POINTS } from "../helpers/env";
+import { MODERATOR_POINTS, MODERATOR_POINTS_DEBOUNCE } from "../helpers/env";
 
 export const PageModerator: React.FC = () => {
   const [configData, setConfigData] = React.useState<ConfigData>();
@@ -39,11 +39,11 @@ export const PageModerator: React.FC = () => {
   }, [playData?.currentTopicId, playData?.currentMode]);
 
   const collectAndSetScores = debounce((panelistId: string, count: number) => {
-    updateDoc(doc(db, col, "scores"), {
+    updateDoc(doc(db, col, "moderatorScores"), {
       [panelistId]: increment(count),
     });
     pushCounts[panelistId] = 0;
-  }, 1000);
+  }, MODERATOR_POINTS_DEBOUNCE);
 
   const pushCounts: { [key: string]: number } = {};
 

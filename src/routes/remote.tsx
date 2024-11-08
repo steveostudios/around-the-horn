@@ -8,7 +8,7 @@ import { Page } from "../components/Page";
 import { PanelistCard } from "../components/PanelistCard";
 import { doc, increment, onSnapshot, updateDoc } from "@firebase/firestore";
 import { col, db } from "../data/config";
-import { POINTS } from "../helpers/env";
+import { POINTS, POINTS_DEBOUNCE } from "../helpers/env";
 
 export const PageRemote: React.FC = () => {
   const [configData, setConfigData] = React.useState<ConfigData>();
@@ -55,7 +55,7 @@ export const PageRemote: React.FC = () => {
       [panelistId]: increment(count),
     });
     pushCounts[panelistId] = 0;
-  }, 1000);
+  }, POINTS_DEBOUNCE);
 
   const pushCounts: { [key: string]: number } = {};
 

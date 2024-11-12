@@ -5,6 +5,7 @@ import { Topic } from "../helpers/types";
 interface Props {
   topics?: Topic[];
   currentTopicId?: string;
+  currentTopics: string[];
 }
 
 export const TopicsBar: React.FC<Props> = (props) => {
@@ -38,15 +39,17 @@ export const TopicsBar: React.FC<Props> = (props) => {
           left: headerWidth - 60 - scrollListOffset,
         }}
       >
-        {topics.map((topic) => (
-          <li
-            key={topic.id}
-            ref={topic.id === currentTopicId ? currentTopicRef : null}
-            className={topic.id === currentTopicId ? "current" : ""}
-          >
-            {topic.slug}
-          </li>
-        ))}
+        {topics
+          .filter((topic) => props.currentTopics.includes(topic.id))
+          .map((topic) => (
+            <li
+              key={topic.id}
+              ref={topic.id === currentTopicId ? currentTopicRef : null}
+              className={topic.id === currentTopicId ? "current" : ""}
+            >
+              {topic.slug}
+            </li>
+          ))}
         <li></li>
       </ScrollList>
     </Container>
@@ -90,11 +93,12 @@ const ScrollList = styled("ul")({
     clipPath: `polygon(2rem 0, 100% 0%, calc(100% - 2rem) 100%, 0% 100%)`,
 
     listStyleType: "none",
-    fontSize: "1.25rem",
+    fontSize: "2rem",
     backgroundColor: "var(--black)",
 
     "&.current": {
-      backgroundColor: "#3e3e3e",
+      backgroundColor: "var(--color-red)",
+      fontWeight: "bold",
     },
     "&:last-of-type": {
       width: "9999px",
@@ -117,7 +121,7 @@ const Header = styled("div")({
 
   listStyleType: "none",
   textTransform: "uppercase",
-  fontSize: "1.75rem",
+  fontSize: "2rem",
   fontWeight: "bold",
   backgroundColor: "var(--black)",
 });

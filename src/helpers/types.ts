@@ -38,4 +38,6 @@ export interface PlayData {
   currentTopicId: string;
   currentMode: Mode;
   currentScoreType: ScoreType;
+  currentPanelists: string[];
+  currentTopics: string[];
 }

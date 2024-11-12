@@ -22,7 +22,7 @@ export const PanelistCard: React.FC<Props> = (props) => {
   const { panelist, score, type, disabled } = props;
 
   return (
-    <Container key={panelist.id} disabled={disabled || false}>
+    <Container key={panelist.id} disabled={disabled || false} type={type}>
       <img
         src={panelist.imgUrl || ""}
         alt={panelist.name}
@@ -60,58 +60,60 @@ export const PanelistCard: React.FC<Props> = (props) => {
   );
 };
 
-const Container = styled("div")((props: { disabled: boolean }) => ({
-  display: "flex",
-  "flex-direction": "column",
-  alignItems: "center",
-  gap: "0.5rem",
-  opacity: props.disabled ? 0.5 : 1,
-  padding: "0.25rem",
-  fontSize: "1.25rem",
-  backgroundColor: "var(--black)",
-  border: "0.25rem solid var(--black) inset",
-  borderRadius: "1rem",
-  img: {
-    borderRadius: "calc(1rem - 0.25rem) calc(1rem - 0.25rem) 0 0",
-    overflow: "hidden",
-    width: "100%",
-    height: "auto",
-    aspectRatio: "1/1",
-  },
-  ".controller": {
-    gap: "0.5rem",
+const Container = styled("div")(
+  (props: { disabled: boolean; type: "viewer" | "controller" }) => ({
     display: "flex",
-    flex: 1,
+    "flex-direction": "column",
     alignItems: "center",
-    justifyContent: "space-between",
-    fontWeight: "bold",
-    width: "calc(100% - 1rem)",
-    padding: "0.5rem",
-    backgroundColor: "#B80A43",
-    borderRadius: "0 0 calc(1rem - 0.25rem) calc(1rem - 0.25rem)",
-    // button: {
-    //   width: "2rem",
-    //   height: "2rem",
-    //   fontSize: "1.5rem",
-    //   backgroundColor: "var(--white)",
-    //   borderRadius: "0.5rem",
-    //   border: "none",
-    //   cursor: "pointer",
-    //   display: "flex",
-    //   alignItems: "center",
-    //   justifyContent: "center",
-    // },
-  },
-  ".score": {
     gap: "0.5rem",
-    display: "flex",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    fontWeight: "bold",
-    width: "calc(100% - 1rem)",
-    padding: "0.5rem",
-    backgroundColor: "#B80A43",
-    borderRadius: "0 0 calc(1rem - 0.25rem) calc(1rem - 0.25rem)",
-  },
-}));
+    opacity: props.disabled ? 0.5 : 1,
+    padding: "0.25rem",
+    fontSize: props.type === "viewer" ? "2rem" : "1.25rem",
+    backgroundColor: "var(--black)",
+    border: "0.25rem solid var(--black) inset",
+    borderRadius: "1rem",
+    img: {
+      borderRadius: "calc(1rem - 0.25rem) calc(1rem - 0.25rem) 0 0",
+      overflow: "hidden",
+      width: "100%",
+      height: "auto",
+      aspectRatio: "1/1",
+    },
+    ".controller": {
+      gap: "0.5rem",
+      display: "flex",
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "space-between",
+      fontWeight: "bold",
+      width: "calc(100% - 1rem)",
+      padding: "0.5rem",
+      backgroundColor: "#B80A43",
+      borderRadius: "0 0 calc(1rem - 0.25rem) calc(1rem - 0.25rem)",
+      // button: {
+      //   width: "2rem",
+      //   height: "2rem",
+      //   fontSize: "1.5rem",
+      //   backgroundColor: "var(--white)",
+      //   borderRadius: "0.5rem",
+      //   border: "none",
+      //   cursor: "pointer",
+      //   display: "flex",
+      //   alignItems: "center",
+      //   justifyContent: "center",
+      // },
+    },
+    ".score": {
+      gap: "0.5rem",
+      display: "flex",
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      fontWeight: "bold",
+      width: "calc(100% - 1rem)",
+      padding: "0.5rem",
+      backgroundColor: "var(--color-red)",
+      borderRadius: "0 0 calc(1rem - 0.25rem) calc(1rem - 0.25rem)",
+    },
+  })
+);

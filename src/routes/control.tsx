@@ -15,6 +15,8 @@ import styled from "@emotion/styled";
 import IconDelete from "./../assets/icons/trash-solid-primary.svg";
 import IconAdd from "./../assets/icons/plus-solid-primary.svg";
 import IconMinus from "./../assets/icons/minus-solid-primary.svg";
+import IconEye from "./../assets/icons/eye-solid-primary.svg";
+import IconEyeSlash from "./../assets/icons/eye-slash-solid-primary.svg";
 import { Text } from "../components/Text";
 
 export const PageControl: React.FC = () => {
@@ -32,6 +34,8 @@ export const PageControl: React.FC = () => {
           currentTopicId: data.currentTopicId,
           currentMode: data.currentMode,
           currentScoreType: data.currentScoreType,
+          currentPanelists: data.currentPanelists,
+          currentTopics: data.currentTopics,
         });
       }
     });
@@ -142,6 +146,14 @@ export const PageControl: React.FC = () => {
     });
   };
 
+  const onTogglePanelistVisibility = (panelistId: string) => {
+    updateDoc(playDataRef, {
+      currentPanelists: playData?.currentPanelists.includes(panelistId)
+        ? playData?.currentPanelists.filter((id) => id !== panelistId)
+        : [...(playData?.currentPanelists || []), panelistId],
+    });
+  };
+
   // change the mode
   const onChangeMode = async (mode: string) => {
     if (mode === Mode.INSTRUCTION) {
@@ -183,7 +195,15 @@ export const PageControl: React.FC = () => {
           </Row>
           {configData?.panelists.map((panelist) => (
             <Row key={panelist.id}>
-              <PanelistName>{panelist.name}</PanelistName>
+              <PanelistName
+                style={{
+                  opacity: playData?.currentPanelists.includes(panelist.id)
+                    ? 1
+                    : 0.25,
+                }}
+              >
+                {panelist.name}
+              </PanelistName>
 
               <Text
                 id={panelist.id}
@@ -198,11 +218,11 @@ export const PageControl: React.FC = () => {
                 label="score"
                 value={
                   (
-                    (scores.find((score) => score.id === panelist.id)?.value ||
+                    ((scores.find((score) => score.id === panelist.id)?.value ||
                       0 ||
                       0) /
-                      scores.reduce((acc, score) => acc + score.value, 0) ||
-                    0 * 100
+                      scores.reduce((acc, score) => acc + score.value, 0)) *
+                      100 || 0
                   )
                     .toFixed(2)
                     .toString() + "%"
@@ -230,7 +250,15 @@ export const PageControl: React.FC = () => {
           </Row>
           {configData?.panelists.map((panelist) => (
             <Row key={panelist.id}>
-              <PanelistName>{panelist.name}</PanelistName>
+              <PanelistName
+                style={{
+                  opacity: playData?.currentPanelists.includes(panelist.id)
+                    ? 1
+                    : 0.25,
+                }}
+              >
+                {panelist.name}
+              </PanelistName>
 
               <Text
                 id={panelist.id}
@@ -297,7 +325,37 @@ export const PageControl: React.FC = () => {
             topics={configData?.topics}
             currentTopicId={playData?.currentTopicId}
             currentMode={playData?.currentMode}
+            currentTopics={playData?.currentTopics || []}
           />
+        </Column>
+      </ControlPanel>
+      <ControlPanel>
+        <Column>
+          <Header label="Panelists" />
+          {configData?.panelists.map((panelist) => (
+            <Row key={panelist.id}>
+              <Button
+                name="increment"
+                fitWidth
+                onClick={() => onTogglePanelistVisibility(panelist.id)}
+              >
+                {playData?.currentPanelists.includes(panelist.id) ? (
+                  <img src={IconEye} alt="visible" />
+                ) : (
+                  <img src={IconEyeSlash} alt="hidden" />
+                )}
+              </Button>
+              <PanelistName
+                style={{
+                  opacity: playData?.currentPanelists.includes(panelist.id)
+                    ? 1
+                    : 0.25,
+                }}
+              >
+                {panelist.name}
+              </PanelistName>
+            </Row>
+          ))}
         </Column>
       </ControlPanel>
     </Page>

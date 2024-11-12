@@ -25,6 +25,8 @@ export const PageModerator: React.FC = () => {
           currentTopicId: data.currentTopicId,
           currentMode: data.currentMode,
           currentScoreType: data.currentScoreType,
+          currentPanelists: data.currentPanelists,
+          currentTopics: data.currentTopics,
         });
       }
     });
@@ -38,11 +40,20 @@ export const PageModerator: React.FC = () => {
     setPointsAwarded([]);
   }, [playData?.currentTopicId, playData?.currentMode]);
 
-  const collectAndSetScores = debounce((panelistId: string, count: number) => {
+  const collectAndSetScores = debounce(() => {
     updateDoc(doc(db, col, "moderatorScores"), {
-      [panelistId]: increment(count),
+      ...Object.entries(pushCounts).reduce(
+        (acc, [key, value]) => ({
+          ...acc,
+          [key]: increment(value),
+        }),
+        {}
+      ),
     });
-    pushCounts[panelistId] = 0;
+
+    Object.keys(pushCounts).forEach((key) => {
+      pushCounts[key] = 0;
+    });
   }, MODERATOR_POINTS_DEBOUNCE);
 
   const pushCounts: { [key: string]: number } = {};
@@ -53,7 +64,7 @@ export const PageModerator: React.FC = () => {
         pushCounts[panelistId] = 0;
       }
       pushCounts[panelistId] += incrementValue;
-      collectAndSetScores(panelistId, pushCounts[panelistId]);
+      collectAndSetScores();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -131,30 +142,32 @@ export const PageModerator: React.FC = () => {
         <PointsCard>Points to award: {points}</PointsCard>
       </TopicContent>
       <PanelistGrid>
-        {configData.panelists.map((panelist) => (
-          <PanelistCard
-            key={panelist.id}
-            panelist={panelist}
-            scoreType="points"
-            score={pointsAwarded.find((score) => score.id === panelist.id)}
-            type="controller"
-            onIncrement={onIncrement}
-            disableIncrement={
-              points <= 0 ||
-              !playData.currentTopicId ||
-              playData.currentMode !== "play"
-            }
-            onDecrement={onDecrement}
-            disableDecrement={
-              points >= MODERATOR_POINTS ||
-              !playData.currentTopicId ||
-              pointsAwarded.find((score) => score.id === panelist.id)?.value ===
-                0 ||
-              !pointsAwarded.find((score) => score.id === panelist.id) ||
-              playData.currentMode !== "play"
-            }
-          />
-        ))}
+        {configData.panelists
+          .filter((panelist) => playData.currentPanelists.includes(panelist.id))
+          .map((panelist) => (
+            <PanelistCard
+              key={panelist.id}
+              panelist={panelist}
+              scoreType="points"
+              score={pointsAwarded.find((score) => score.id === panelist.id)}
+              type="controller"
+              onIncrement={onIncrement}
+              disableIncrement={
+                points <= 0 ||
+                !playData.currentTopicId ||
+                playData.currentMode !== "play"
+              }
+              onDecrement={onDecrement}
+              disableDecrement={
+                points >= MODERATOR_POINTS ||
+                !playData.currentTopicId ||
+                pointsAwarded.find((score) => score.id === panelist.id)
+                  ?.value === 0 ||
+                !pointsAwarded.find((score) => score.id === panelist.id) ||
+                playData.currentMode !== "play"
+              }
+            />
+          ))}
       </PanelistGrid>
     </Page>
   );

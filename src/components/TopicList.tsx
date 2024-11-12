@@ -8,6 +8,8 @@ import IconAdd from "./../assets/icons/plus-solid-primary.svg";
 import IconDelete from "./../assets/icons/trash-solid-primary.svg";
 import IconMoveDown from "./../assets/icons/down-solid-primary.svg";
 import IconEdit from "./../assets/icons/pen-to-square-solid-primary.svg";
+import IconEye from "./../assets/icons/eye-solid-primary.svg";
+import IconEyeSlash from "./../assets/icons/eye-slash-solid-primary.svg";
 import { configDataRef, playDataRef } from "../data/dataConfig";
 import { v4 as uuidv4 } from "uuid";
 import { Text } from "./Text";
@@ -18,6 +20,7 @@ interface Props {
   topics?: Topic[];
   currentTopicId?: string;
   currentMode?: Mode;
+  currentTopics: string[];
 }
 
 export const TopicList: React.FC<Props> = (props) => {
@@ -29,6 +32,7 @@ export const TopicList: React.FC<Props> = (props) => {
   // set current topic
   const onSetCurrentTopic = (id: string | null) => {
     if (props.currentMode === Mode.INSTRUCTION) return;
+    if (id !== null && !props.currentTopics.includes(id)) return;
     updateDoc(playDataRef, {
       currentTopicId: id,
     });
@@ -115,6 +119,15 @@ export const TopicList: React.FC<Props> = (props) => {
     setEditedTopics(editedTopics?.filter((topic) => topic.id !== id));
   };
 
+  const onToggleTopicVisibility = (panelistId: string) => {
+    const newCurrentTopics = props.currentTopics.includes(panelistId)
+      ? props.currentTopics.filter((id) => id !== panelistId)
+      : [...props.currentTopics, panelistId];
+    updateDoc(playDataRef, {
+      currentTopics: newCurrentTopics,
+    });
+  };
+
   if (!topics) {
     return null;
   }
@@ -157,6 +170,7 @@ export const TopicList: React.FC<Props> = (props) => {
             No Question
           </Row>
         )}
+
         {!isEdit &&
           topics
             .sort((a, b) => a.order - b.order)
@@ -166,8 +180,33 @@ export const TopicList: React.FC<Props> = (props) => {
                 className={topic.id === currentTopicId ? "selected" : ""}
                 onClick={() => onSetCurrentTopic(topic.id)}
               >
-                <div>{topic.slug}</div>
-                <div>{topic.content}</div>
+                <Button
+                  name="increment"
+                  fitWidth
+                  onClick={() => {
+                    onToggleTopicVisibility(topic.id);
+                  }}
+                >
+                  {props.currentTopics.includes(topic.id) ? (
+                    <img src={IconEye} alt="visible" />
+                  ) : (
+                    <img src={IconEyeSlash} alt="hidden" />
+                  )}
+                </Button>
+                <div
+                  style={{
+                    opacity: props.currentTopics.includes(topic.id) ? 1 : 0.25,
+                  }}
+                >
+                  {topic.slug}
+                </div>
+                <div
+                  style={{
+                    opacity: props.currentTopics.includes(topic.id) ? 1 : 0.25,
+                  }}
+                >
+                  {topic.content}
+                </div>
               </Row>
             ))}
         {isEdit &&
@@ -248,6 +287,7 @@ const Row = styled("div")({
   alignItems: "center",
   padding: "1rem",
   gap: "0.5rem",
+  borderLeft: "4px solid transparent",
   ".main": {
     flex: 1,
     display: "flex",
@@ -258,8 +298,8 @@ const Row = styled("div")({
     backgroundColor: "var(--color-controlpanel-bgo)",
   },
   "&.selected": {
-    backgroundColor: "var(--color-primary)",
-    color: "var(--black)",
+    borderLeft: "4px solid var(--color-primary)",
+    backgroundColor: "var(--color-secondary)",
   },
   button: {
     width: "3rem",

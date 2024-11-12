@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { slugify, titleCase } from "./../helpers/string";
+import { MouseEventHandler } from "react";
 
 interface Props {
   name: string;
@@ -14,7 +15,8 @@ interface Props {
 export const Button: React.FC<Props> = (props) => {
   const { name, label, onClick, disabled, children } = props;
 
-  const onClickHandler = () => {
+  const onClickHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
     if (onClick && !disabled) onClick();
   };
   return (

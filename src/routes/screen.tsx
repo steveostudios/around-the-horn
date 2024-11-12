@@ -45,6 +45,8 @@ export const PageScreen: React.FC = () => {
           currentTopicId: data.currentTopicId,
           currentMode: data.currentMode,
           currentScoreType: data.currentScoreType,
+          currentPanelists: data.currentPanelists,
+          currentTopics: data.currentTopics,
         });
       }
     });
@@ -121,47 +123,48 @@ export const PageScreen: React.FC = () => {
   return (
     <Page>
       <ScoreTypeBar currentScoreType={playData.currentScoreType} />
-      <PanelistGrid>
-        {configData.panelists.map((panelist) => {
-          const score =
-            playData.currentScoreType === "moderator"
-              ? moderatorScores.find((score) => score.id === panelist.id)
-              : scores.find((score) => score.id === panelist.id) || {
-                  id: panelist.id,
-                  value: 0,
-                };
-
-          const total = scores.reduce((acc, score) => acc + score.value, 0);
-          const percent =
-            total > 0
-              ? (((score?.value || 0) / total) * 100).toFixed(2)
-              : "0.00";
-          // total > 0 ? Math.round(((score?.value || 0) / total) * 100) : 0;
-
-          return (
-            <PanelistCard
-              key={panelist.id}
-              panelist={panelist}
-              score={score}
-              scoreType={
-                playData.currentScoreType === "moderator" ? "points" : "percent"
-              }
-              percent={percent}
-              type="viewer"
-            />
-          );
-        })}
-      </PanelistGrid>
-
       <CurrentTopicBar
         topic={configData.topics.find(
           (topic) => topic.id === playData.currentTopicId
         )}
       />
+      <PanelistGrid>
+        {configData.panelists
+          .filter((panelist) => playData.currentPanelists.includes(panelist.id))
+          .map((panelist) => {
+            const score =
+              playData.currentScoreType === "moderator"
+                ? moderatorScores.find((score) => score.id === panelist.id)
+                : scores.find((score) => score.id === panelist.id) || {
+                    id: panelist.id,
+                    value: 0,
+                  };
 
+            const total = scores.reduce((acc, score) => acc + score.value, 0);
+            const percent =
+              total > 0
+                ? (((score?.value || 0) / total) * 100).toFixed(2)
+                : "0.00";
+            return (
+              <PanelistCard
+                key={panelist.id}
+                panelist={panelist}
+                score={score}
+                scoreType={
+                  playData.currentScoreType === "moderator"
+                    ? "points"
+                    : "percent"
+                }
+                percent={percent}
+                type="viewer"
+              />
+            );
+          })}
+      </PanelistGrid>
       <TopicsBar
         topics={configData.topics}
         currentTopicId={playData.currentTopicId}
+        currentTopics={playData.currentTopics}
       />
       <Spacer />
     </Page>
@@ -177,8 +180,10 @@ const PanelistGrid = styled("div")({
   gap: "1rem",
   flex: 1,
   maxWidth: "100%",
+  width: "100%",
   "> div": {
-    flex: "1 1 256px",
+    width: "400px",
+    // flex: "1 1 260px",
   },
 });
 

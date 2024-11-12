@@ -27,7 +27,7 @@ const Container = styled("div")({
   color: "var(--black)",
   backgroundColor: "var(--white)",
   height: "60px",
-  fontSize: "1.75rem",
+  fontSize: "2rem",
 });
 
 const Header = styled("div")({
@@ -45,7 +45,7 @@ const Header = styled("div")({
   color: "var(--white)",
   listStyleType: "none",
   textTransform: "uppercase",
-  fontSize: "1.75rem",
+  fontSize: "2rem",
   fontWeight: "bold",
   backgroundColor: "#093354",
   whiteSpace: "nowrap",

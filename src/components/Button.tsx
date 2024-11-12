@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { slugify, titleCase } from "./../helpers/string";
-import { MouseEventHandler } from "react";
 
 interface Props {
   name: string;

@@ -90,18 +90,6 @@ const Container = styled("div")(
       padding: "0.5rem",
       backgroundColor: "#B80A43",
       borderRadius: "0 0 calc(1rem - 0.25rem) calc(1rem - 0.25rem)",
-      // button: {
-      //   width: "2rem",
-      //   height: "2rem",
-      //   fontSize: "1.5rem",
-      //   backgroundColor: "var(--white)",
-      //   borderRadius: "0.5rem",
-      //   border: "none",
-      //   cursor: "pointer",
-      //   display: "flex",
-      //   alignItems: "center",
-      //   justifyContent: "center",
-      // },
     },
     ".score": {
       gap: "0.5rem",

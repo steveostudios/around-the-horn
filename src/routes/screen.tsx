@@ -178,11 +178,13 @@ const PanelistGrid = styled("div")({
   justifyContent: "center",
   alignSelf: "center",
   gap: "1rem",
+  paddingTop: "2rem",
+  paddingBottom: "2rem",
   flex: 1,
   maxWidth: "100%",
   width: "100%",
   "> div": {
-    width: "400px",
+    width: "360px",
     // flex: "1 1 260px",
   },
 });

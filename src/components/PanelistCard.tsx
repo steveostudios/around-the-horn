@@ -39,13 +39,13 @@ export const PanelistCard: React.FC<Props> = (props) => {
       )}
       {type === "controller" && (
         <div className="controller">
-          <ButtonClient
+          {/* <ButtonClient
             name="decrement"
             onClick={() => props.onDecrement && props.onDecrement(panelist.id)}
             disabled={props.disableDecrement}
           >
             <img src={IconMinus} alt="Decrement" />
-          </ButtonClient>
+          </ButtonClient> */}
           <span>{score?.value || 0}</span>
           <ButtonClient
             name="increment"

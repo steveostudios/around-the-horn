@@ -110,8 +110,8 @@ export const PageScreen: React.FC = () => {
         <Instructions>
           <p>Scan to play.</p>
           <p>
-            For each topic you will be given {POINTS} points to give out or take
-            away.
+            For each topic you will be given {POINTS} points to give to
+            panelists.
             <br />
             Your points to give out do not roll over.
           </p>

@@ -46,7 +46,7 @@ export const PanelistCard: React.FC<Props> = (props) => {
           >
             <img src={IconMinus} alt="Decrement" />
           </ButtonClient> */}
-          <span>{score?.value || 0}</span>
+          <div className="score">{score?.value || 0}</div>
           <ButtonClient
             name="increment"
             onClick={() => props.onIncrement && props.onIncrement(panelist.id)}
@@ -90,6 +90,11 @@ const Container = styled("div")(
       padding: "0.5rem",
       backgroundColor: "#B80A43",
       borderRadius: "0 0 calc(1rem - 0.25rem) calc(1rem - 0.25rem)",
+      ".score": {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      },
     },
     ".score": {
       gap: "0.5rem",

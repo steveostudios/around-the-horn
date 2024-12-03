@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { Panelist, Score } from "../helpers/types";
 import IconAdd from "./../assets/icons/plus-solid.svg";
-import IconMinus from "./../assets/icons/minus-solid.svg";
+// import IconMinus from "./../assets/icons/minus-solid.svg";
 import { ButtonClient } from "./ButtonClient";
 
 interface Props {

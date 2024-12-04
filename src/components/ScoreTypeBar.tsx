@@ -19,14 +19,17 @@ export const ScoreTypeBar: React.FC<Props> = (props) => {
 };
 
 const Container = styled("div")({
-  padding: 0,
+  position: "absolute",
+  top: "-7rem",
+  left: "9rem",
+  padding: "1rem",
   margin: 0,
   display: "flex",
   flexDirection: "row",
   backgroundColor: "rgba(0, 0, 0, 0.5)",
-  height: "60px",
+  borderRadius: "1rem",
   gap: "4px",
-  fontSize: "1.75rem",
+  fontSize: "1.25rem",
   fontWeight: "bold",
   marginLeft: "-2rem",
   alignItems: "center",

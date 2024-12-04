@@ -1,12 +1,10 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { Panelist, Score } from "../helpers/types";
-import IconAdd from "./../assets/icons/plus-solid.svg";
-// import IconMinus from "./../assets/icons/minus-solid.svg";
-import { ButtonClient } from "./ButtonClient";
 
 interface Props {
   panelist: Panelist;
+  color: { text: string; bg: string };
   score?: Score;
   percent?: string;
   scoreType: "points" | "percent";
@@ -30,32 +28,16 @@ export const PanelistCard: React.FC<Props> = (props) => {
           props.onIncrement && props.onIncrement(panelist.id);
         }}
       />
-      <div>{panelist.name}</div>
-      {type === "viewer" && props.scoreType !== "percent" && (
-        <div className="score">{score?.value || 0}</div>
-      )}
-      {type === "viewer" && props.scoreType === "percent" && (
-        <div className="score">{props.percent}%</div>
-      )}
-      {type === "controller" && (
-        <div className="controller">
-          {/* <ButtonClient
-            name="decrement"
-            onClick={() => props.onDecrement && props.onDecrement(panelist.id)}
-            disabled={props.disableDecrement}
-          >
-            <img src={IconMinus} alt="Decrement" />
-          </ButtonClient> */}
+      <Label {...props.color}>
+        <div className="name">{panelist.name}</div>
+
+        {type === "viewer" && props.scoreType !== "percent" && (
           <div className="score">{score?.value || 0}</div>
-          <ButtonClient
-            name="increment"
-            onClick={() => props.onIncrement && props.onIncrement(panelist.id)}
-            disabled={props.disableIncrement}
-          >
-            <img src={IconAdd} alt="Increment" />
-          </ButtonClient>
-        </div>
-      )}
+        )}
+        {type === "viewer" && props.scoreType === "percent" && (
+          <div className="score">{props.percent}%</div>
+        )}
+      </Label>
     </Container>
   );
 };
@@ -65,12 +47,10 @@ const Container = styled("div")(
     display: "flex",
     "flex-direction": "column",
     alignItems: "center",
-    gap: "0.5rem",
     opacity: props.disabled ? 0.5 : 1,
     padding: "0.25rem",
-    fontSize: props.type === "viewer" ? "2rem" : "1.25rem",
-    backgroundColor: "var(--black)",
-    border: "0.25rem solid var(--black) inset",
+    fontSize: "2rem",
+    fontWeight: "bold",
     borderRadius: "1rem",
     img: {
       borderRadius: "calc(1rem - 0.25rem) calc(1rem - 0.25rem) 0 0",
@@ -79,34 +59,32 @@ const Container = styled("div")(
       height: "auto",
       aspectRatio: "1/1",
     },
-    ".controller": {
-      gap: "0.5rem",
-      display: "flex",
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "space-between",
-      fontWeight: "bold",
-      width: "calc(100% - 1rem)",
-      padding: "0.5rem",
-      backgroundColor: "#B80A43",
-      borderRadius: "0 0 calc(1rem - 0.25rem) calc(1rem - 0.25rem)",
-      ".score": {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      },
-    },
-    ".score": {
-      gap: "0.5rem",
-      display: "flex",
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      fontWeight: "bold",
-      width: "calc(100% - 1rem)",
-      padding: "0.5rem",
-      backgroundColor: "var(--color-red)",
-      borderRadius: "0 0 calc(1rem - 0.25rem) calc(1rem - 0.25rem)",
-    },
   })
 );
+
+const Label = styled("div")((props: { text: string; bg: string }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  backgroundColor: props.bg,
+  width: "100%",
+  height: "3rem",
+  borderRadius: "0 0 calc(1rem - 0.25rem) calc(1rem - 0.25rem)",
+  margin: "0 0.5rem",
+  overflow: "hidden",
+  ".name": {
+    display: "flex",
+    alignItems: "center",
+    height: "100%",
+    padding: "0 1rem",
+    color: props.text,
+  },
+  ".score": {
+    display: "flex",
+    alignItems: "center",
+    height: "100%",
+    padding: "0 1rem",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    color: "#fff",
+  },
+}));

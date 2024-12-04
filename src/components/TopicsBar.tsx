@@ -61,7 +61,7 @@ const Container = styled("div")({
   margin: 0,
   display: "flex",
   flexDirection: "row",
-  backgroundColor: "var(--white)",
+  backgroundColor: "#253560",
   height: "60px",
   gap: "4px",
   position: "relative",
@@ -78,7 +78,7 @@ const ScrollList = styled("ul")({
   listStyleType: "none",
   overflowX: "auto",
   overflow: "visible",
-  backgroundColor: "var(--white)",
+  backgroundColor: "#253560",
   height: "100%",
   transition: "left 0.5s",
   li: {
@@ -94,11 +94,12 @@ const ScrollList = styled("ul")({
 
     listStyleType: "none",
     fontSize: "2rem",
-    backgroundColor: "var(--black)",
+    backgroundColor: "#213E7F",
 
     "&.current": {
-      backgroundColor: "var(--color-red)",
+      backgroundColor: "#fff",
       fontWeight: "bold",
+      color: "#000000",
     },
     "&:last-of-type": {
       width: "9999px",
@@ -114,6 +115,7 @@ const Header = styled("div")({
   padding: "0 3rem",
   margin: 0,
   marginLeft: "-2rem",
+  marginRight: "-2rem",
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -122,6 +124,7 @@ const Header = styled("div")({
   listStyleType: "none",
   textTransform: "uppercase",
   fontSize: "2rem",
-  fontWeight: "bold",
-  backgroundColor: "var(--black)",
+  letterSpacing: "-0.1rem",
+  fontWeight: "900",
+  backgroundColor: "#0064A8",
 });

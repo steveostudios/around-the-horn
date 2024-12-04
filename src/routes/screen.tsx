@@ -25,6 +25,13 @@ export const PageScreen: React.FC = () => {
   const [scores, setScores] = React.useState<Score[]>([]);
   const [moderatorScores, setModeratorScores] = React.useState<Score[]>([]);
 
+  const colors = [
+    { text: "#000000", bg: "#509DDD" },
+    { text: "#ffffff", bg: "#C5203F" },
+    { text: "ffffff", bg: "#0064A8" },
+    { text: "#000000", bg: "#8DC1C5" },
+  ];
+
   // fetch config data
   useEffect(() => {
     (async () => {
@@ -95,7 +102,7 @@ export const PageScreen: React.FC = () => {
     }
 
     QRCode.toCanvas(canvasRef.current, HOST, {
-      width: 400,
+      width: playData?.currentMode === Mode.INSTRUCTION ? 400 : 130,
     });
   }, [playData]);
 
@@ -121,17 +128,16 @@ export const PageScreen: React.FC = () => {
   }
 
   return (
-    <Page>
+    <Page isScreen>
       <ScoreTypeBar currentScoreType={playData.currentScoreType} />
-      <CurrentTopicBar
-        topic={configData.topics.find(
-          (topic) => topic.id === playData.currentTopicId
-        )}
-      />
+      <SmallQRCode>
+        <QRCodeCanvas ref={canvasRef} />
+      </SmallQRCode>
+
       <PanelistGrid>
         {configData.panelists
           .filter((panelist) => playData.currentPanelists.includes(panelist.id))
-          .map((panelist) => {
+          .map((panelist, i) => {
             const score =
               playData.currentScoreType === "moderator"
                 ? moderatorScores.find((score) => score.id === panelist.id)
@@ -147,6 +153,7 @@ export const PageScreen: React.FC = () => {
                 : "0.00";
             return (
               <PanelistCard
+                color={colors[i]}
                 key={panelist.id}
                 panelist={panelist}
                 score={score}
@@ -161,15 +168,28 @@ export const PageScreen: React.FC = () => {
             );
           })}
       </PanelistGrid>
-      <TopicsBar
-        topics={configData.topics}
-        currentTopicId={playData.currentTopicId}
-        currentTopics={playData.currentTopics}
-      />
+      <Bars>
+        <CurrentTopicBar
+          topic={configData.topics.find(
+            (topic) => topic.id === playData.currentTopicId
+          )}
+        />
+        <TopicsBar
+          topics={configData.topics}
+          currentTopicId={playData.currentTopicId}
+          currentTopics={playData.currentTopics}
+        />
+      </Bars>
       <Spacer />
     </Page>
   );
 };
+
+const SmallQRCode = styled("div")({
+  position: "absolute",
+  top: "-9rem",
+  right: "0rem",
+});
 
 const PanelistGrid = styled("div")({
   display: "flex",
@@ -201,6 +221,7 @@ const Instructions = styled("div")({
   backgroundColor: "var(--black)",
   color: "var(--white)",
   textAlign: "center",
+  marginBottom: "4rem",
   p: {
     margin: 0,
     padding: 0,
@@ -209,11 +230,18 @@ const Instructions = styled("div")({
 
 const QRCodeCanvas = styled("canvas")({
   margin: "0 auto",
-  padding: "4rem",
+  padding: "2rem",
   width: "400px",
   height: "400px",
 });
 
 const Spacer = styled("div")({
   height: "6rem",
+});
+
+const Bars = styled("div")({
+  flex: 1,
+  maxWidth: "100%",
+  width: "100%",
+  boxShadow: "0 2rem 2rem rgba(0,0,0,0.65)",
 });

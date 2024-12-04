@@ -5,10 +5,10 @@ import { ConfigData, PlayData, Score } from "../helpers/types";
 import { getConfigData, playDataRef } from "../data/dataConfig";
 import styled from "@emotion/styled/macro";
 import { Page } from "../components/Page";
-import { PanelistCard } from "../components/PanelistCard";
 import { doc, increment, onSnapshot, updateDoc } from "@firebase/firestore";
 import { col, db } from "../data/config";
 import { POINTS, POINTS_DEBOUNCE } from "../helpers/env";
+import { PanelistScore } from "../components/PanelistScore";
 
 export const PageRemote: React.FC = () => {
   const [configData, setConfigData] = React.useState<ConfigData>();
@@ -133,6 +133,7 @@ export const PageRemote: React.FC = () => {
 
   return (
     <Page>
+      {/* <div> */}
       <TopicContent>
         {playData.currentTopicId ? (
           configData.topics.find(
@@ -143,13 +144,12 @@ export const PageRemote: React.FC = () => {
         ) : (
           <Loading>Waiting for topic</Loading>
         )}
-        <PointsCard>Points to award: {points}</PointsCard>
       </TopicContent>
       <PanelistGrid>
         {configData.panelists
           .filter((panelist) => playData.currentPanelists.includes(panelist.id))
           .map((panelist) => (
-            <PanelistCard
+            <PanelistScore
               key={panelist.id}
               panelist={panelist}
               disabled={
@@ -176,38 +176,48 @@ export const PageRemote: React.FC = () => {
             />
           ))}
       </PanelistGrid>
+      {playData.currentMode === "play" && playData.currentTopicId && (
+        <PointsCard>
+          <div className="instructions">
+            Click on the panelist to award points.
+          </div>
+          {points} to award on this topic
+        </PointsCard>
+      )}
     </Page>
   );
 };
 
 const TopicContent = styled("div")({
   padding: "1rem",
-  margin: "1rem 0",
+  paddingBottom: "0",
   fontSize: "1.5rem",
   fontWeight: "bold",
   height: "6rem",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: "var(--black)",
-  position: "relative",
+  backgroundColor: "rgba(0,0,0,0.5)",
 });
 
 const PointsCard = styled("div")({
   position: "absolute",
   top: "calc(100% - 1rem)",
-  padding: "0.5rem",
-  borderRadius: "0.5rem",
-  backgroundColor: "var(--white)",
-  color: "var(--black)",
+  padding: "0.5rem 0",
+  backgroundColor: "#213E7F",
+  boxShadow: "0 0.5rem 0.5rem rgba(0,0,0,0.65)",
+  color: "#ffffff",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: "1rem",
+  gap: "0.5rem",
   justifyContent: "center",
   fontSize: "1.5rem",
   fontWeight: "bold",
-  width: "80%",
+  width: "100%",
+  marginTop: "-8rem",
+  // marginBottom: "8rem",
+  paddingTop: "3rem",
   ".instructions": {
     textAlign: "center",
     fontWeight: "normal",
@@ -219,8 +229,11 @@ const PanelistGrid = styled("div")({
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
   gap: "1rem",
-  padding: "1rem",
+  padding: "1rem 0",
   placeItems: "center",
+  position: "relative",
+  zIndex: 10,
+  marginBottom: "6rem",
 });
 
 const Loading = styled("div")({});

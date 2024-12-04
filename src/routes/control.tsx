@@ -119,7 +119,7 @@ export const PageControl: React.FC = () => {
   };
 
   const onIncrementModeratorScore = (panelistId: string) => {
-    const score = scores.find((score) => score.id === panelistId);
+    const score = moderatorScores.find((score) => score.id === panelistId);
     if (!score) {
       return;
     }
@@ -130,13 +130,13 @@ export const PageControl: React.FC = () => {
   };
 
   const onDecrementModeratorScore = (panelistId: string) => {
-    const score = scores.find((score) => score.id === panelistId);
-    if (!score) {
+    const score = moderatorScores.find((score) => score.id === panelistId);
+    if (!score || score.value <= 0) {
       return;
     }
 
     updateDoc(moderatorScoresDataRef, {
-      [panelistId]: increment(1),
+      [panelistId]: increment(-1),
     });
   };
 

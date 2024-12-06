@@ -68,8 +68,8 @@ const Container = styled("div")((props: { disabled: boolean }) => ({
     maxHeight: "10rem",
     borderRadius: "calc(1rem - 0.25rem) calc(1rem - 0.25rem) 0 0",
     overflow: "hidden",
-    width: "100%",
-    height: "auto",
+    // width: "100%",
+    // height: "auto",
 
     // aspectRatio: "1/1",
   },

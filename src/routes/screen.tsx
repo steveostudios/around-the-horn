@@ -137,6 +137,7 @@ export const PageScreen: React.FC = () => {
       <PanelistGrid>
         {configData.panelists
           .filter((panelist) => playData.currentPanelists.includes(panelist.id))
+          .sort((a, b) => a.order - b.order)
           .map((panelist, i) => {
             const score =
               playData.currentScoreType === "moderator"

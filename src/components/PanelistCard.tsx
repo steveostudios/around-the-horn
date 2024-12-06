@@ -78,6 +78,7 @@ const Label = styled("div")((props: { text: string; bg: string }) => ({
     height: "100%",
     padding: "0 1rem",
     color: props.text,
+    fontSize: "1.5rem",
   },
   ".score": {
     display: "flex",

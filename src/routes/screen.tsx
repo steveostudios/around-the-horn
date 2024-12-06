@@ -153,7 +153,7 @@ export const PageScreen: React.FC = () => {
                 : "0.00";
             return (
               <PanelistCard
-                color={colors[i]}
+                color={colors[i % colors.length]}
                 key={panelist.id}
                 panelist={panelist}
                 score={score}

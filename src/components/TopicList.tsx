@@ -196,6 +196,7 @@ export const TopicList: React.FC<Props> = (props) => {
                 <div
                   style={{
                     opacity: props.currentTopics.includes(topic.id) ? 1 : 0.25,
+                    fontStyle: "italic",
                   }}
                 >
                   {topic.slug}
